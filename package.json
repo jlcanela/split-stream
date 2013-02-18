@@ -1,0 +1,21 @@
+{
+  "name": "split-stream",
+  "version": "0.1.0",
+  "author": "sasa+1 <sasaplus1@gmail.com>",
+  "description": "stream of split strings",
+  "main": "./index.js",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sasaplus1/split-stream.git"
+  },
+  "scripts": {
+    "fix": "fixjsstyle --strict --nojsdoc -r ./lib -r ./test ./index.js",
+    "lint": "gjslint --strict --nojsdoc -r ./lib -r ./test ./index.js",
+    "test": "./node_modules/.bin/mocha"
+  },
+  "devDependencies": {
+    "mocha": "~1.8"
+  }
+}
