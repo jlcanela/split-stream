@@ -21,7 +21,9 @@ fs.createReadStream('./file').pipe(ss).pipe(process.stdout);
 ```js
 var fs = require('fs'),
     splitStream = require('split-stream'),
-    ss = splitStream.create();
+    ss = splitStream.create({
+      splitStr: '\t'
+    });
 
 ss.setEncoding('utf8');
 
@@ -38,7 +40,7 @@ ss.on('close', function() {
 fs.createReadStream('./file').pipe(ss);
 ```
 
-## Functions
+## Function
 
 ### create(options)
 
@@ -63,6 +65,8 @@ called destroy().
 ### data
 
 * `data` string - split string
+
+until buffer is empty.
 
 ### drain
 
