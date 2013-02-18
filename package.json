@@ -11,6 +11,8 @@
     "url": "https://github.com/sasaplus1/split-stream.git"
   },
   "scripts": {
+    "fix": "fixjsstyle --strict --nojsdoc -r ./lib -r ./test ./index.js",
+    "lint": "gjslint --strict --nojsdoc -r ./lib -r ./test ./index.js",
     "test": "./node_modules/.bin/mocha"
   },
   "devDependencies": {
