@@ -40,15 +40,15 @@ suite('split-streamのテスト', function() {
         function() {
           assert.throws(function() {
             splitStream.create({ splitStr: 1 });
-          }, 'splitStr should be a string or regexp: 1',
+          }, 'splitStr should be a string or regexp. not 1',
           'create({ splitStr: 1 }) should be threw TypeError');
           assert.throws(function() {
             splitStream.create({ splitStr: true });
-          }, 'splitStr should be a string or regexp: true',
+          }, 'splitStr should be a string or regexp. not true',
           'create({ splitStr: true }) should be threw TypeError');
           assert.throws(function() {
             splitStream.create({ splitStr: function() {} });
-          }, 'splitStr should be a string or regexp: function () {}',
+          }, 'splitStr should be a string or regexp. not function () {}',
           'create({ splitStr: function() {} }) should be threw TypeError');
         });
 
