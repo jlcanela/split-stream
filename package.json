@@ -1,6 +1,6 @@
 {
   "name": "split-stream",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "sasa+1 <sasaplus1@gmail.com>",
   "description": "stream of split strings",
   "main": "./index.js",

@@ -40,15 +40,15 @@ suite('split-streamのテスト', function() {
         function() {
           assert.throws(function() {
             splitStream.create({ splitStr: 1 });
-          }, 'splitStr should be a string or regexp: 1',
+          }, 'splitStr should be a string or regexp. not 1',
           'create({ splitStr: 1 }) should be threw TypeError');
           assert.throws(function() {
             splitStream.create({ splitStr: true });
-          }, 'splitStr should be a string or regexp: true',
+          }, 'splitStr should be a string or regexp. not true',
           'create({ splitStr: true }) should be threw TypeError');
           assert.throws(function() {
             splitStream.create({ splitStr: function() {} });
-          }, 'splitStr should be a string or regexp: function () {}',
+          }, 'splitStr should be a string or regexp. not function () {}',
           'create({ splitStr: function() {} }) should be threw TypeError');
         });
 
@@ -137,6 +137,23 @@ suite('split-streamのテスト', function() {
       ss.resume();
       ss.write('');
       ss.resume();
+      ss.end(src);
+    });
+
+    test('区切り文字がない場合でも分割できること', function(done) {
+      var ss = splitStream.create({ splitStr: ':' }),
+          src = '12345',
+          lines = [];
+
+      ss.on('data', function(data) {
+        lines.push(data);
+      });
+      ss.on('end', function() {
+        assert.deepEqual(lines, ['12345'],
+            'SplitStream should be sent data event per split string');
+        done();
+      });
+
       ss.end(src);
     });
 
