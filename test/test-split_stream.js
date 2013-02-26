@@ -140,6 +140,23 @@ suite('split-streamのテスト', function() {
       ss.end(src);
     });
 
+    test('区切り文字がない場合でも分割できること', function(done) {
+      var ss = splitStream.create({ splitStr: ':' }),
+          src = '12345',
+          lines = [];
+
+      ss.on('data', function(data) {
+        lines.push(data);
+      });
+      ss.on('end', function() {
+        assert.deepEqual(lines, ['12345'],
+            'SplitStream should be sent data event per split string');
+        done();
+      });
+
+      ss.end(src);
+    });
+
   });
 
   suite('pause/resumeメソッドのテスト', function() {
