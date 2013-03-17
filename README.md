@@ -75,9 +75,11 @@ var splitStream = require('split-stream');
 // true if over version 0.9.
 (splitStream === splitStream.SplitStream2);
 
-// true if over version 0.8.
+// true if under version 0.8.
 (splitStream === splitStream.SplitStream2);
 ```
+
+---
 
 ### SplitStream2
 
@@ -104,6 +106,8 @@ default value is `/\r?\n/`.
 * `encoding` string - encoding
 
 default value is `utf8`. this value is argument of string_decoder.
+
+---
 
 ### SplitStream1
 
