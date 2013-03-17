@@ -67,7 +67,7 @@ fs.createReadStream('./file').pipe(ss);
 
 ### SplitStream
 
-class of SplitStream1 or SplitStream2.
+alias of SplitStream1 or SplitStream2.
 
 ```js
 var splitStream = require('split-stream');
@@ -76,20 +76,24 @@ var splitStream = require('split-stream');
 (splitStream === splitStream.SplitStream2);
 
 // true if under version 0.8.
-(splitStream === splitStream.SplitStream2);
+(splitStream === splitStream.SplitStream1);
 ```
-
----
 
 ### SplitStream2
 
 inherited stream2 class.
 
+### SplitStream1
+
+inherited old-style stream class.
+
+---
+
 ## Function (SplitStream2)
 
 ### create(options)
 
-* `` object - options object
+* `options` object - options object
 
 * `return` SplitStream2 - SplitStream2
 
@@ -105,13 +109,9 @@ default value is `/\r?\n/`.
 
 * `encoding` string - encoding
 
-default value is `utf8`. this value is argument of string_decoder.
+default value is `utf8`. this value is argument of `string_decoder`.
 
 ---
-
-### SplitStream1
-
-inherited old-style stream class.
 
 ## Function (SplitStream1)
 
