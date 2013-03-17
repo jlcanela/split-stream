@@ -1,8 +1,13 @@
 var assert = require('assert'),
     fs = require('fs'),
-    splitStream = require('../').SplitStream1;
+    splitStream = require('../').SplitStream2;
 
-suite('split-stream - stream1のテスト', function() {
+suite('split-stream - stream2のテスト', function() {
+
+  // no test if node.js version under 0.8
+  if (splitStream === null) {
+    return test('stream2 is not implemented.');
+  }
 
   suite('コンストラクタのテスト', function() {
 
@@ -54,55 +59,19 @@ suite('split-stream - stream1のテスト', function() {
 
   });
 
-  suite('destroyメソッドのテスト', function() {
-
-    test('closeイベントが送信されること', function(done) {
-      var ss = splitStream.create();
-
-      ss.on('close', function() {
-        done();
-      });
-
-      ss.destroy();
-    });
-
-    test('二度destroyを呼ぶとerrorイベントが送信されること', function(done) {
-      var ss = splitStream.create();
-
-      ss.on('error', function(err) {
-        assert.strictEqual(err.message, 'SplitStream closed',
-            'call twice destroy() should be sent error event');
-        done();
-      });
-
-      ss.destroy();
-      ss.destroy();
-    });
-
-  });
-
   suite('write/endメソッドのテスト', function() {
-
-    test('endの後にwriteを呼ぶとerrorイベントが送信されること', function(done) {
-      var ss = splitStream.create();
-
-      ss.on('error', function(err) {
-        assert.strictEqual(err.message, 'SplitStream ended',
-            'write() after end() should be sent error event');
-        done();
-      });
-
-      ss.end();
-      ss.write();
-    });
 
     test('writeとendで渡された引数を分割できること', function(done) {
       var ss = splitStream.create({ splitStr: ',' }),
           src = '1,2,3,4,5,6,',
           items = [];
 
-      ss.on('data', function(data) {
-        items.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          items.push(data);
+        }
       });
       ss.on('end', function() {
         assert.deepEqual(items, ['1', '2', '3', '4', '5', '6', ''],
@@ -112,32 +81,8 @@ suite('split-stream - stream1のテスト', function() {
 
       src.split('').forEach(function(value) {
         ss.write(value);
-        ss.resume();
       });
       ss.end();
-    });
-
-    test('writeで空文字を渡しendに引数を渡して分割できること', function(done) {
-      var ss = splitStream.create({ splitStr: ':' }),
-          src = '1:2:3:4:5:',
-          lines = [];
-
-      ss.on('data', function(data) {
-        lines.push(data);
-      });
-      ss.on('end', function() {
-        assert.deepEqual(lines, ['1', '2', '3', '4', '5', ''],
-            'SplitStream should be sent data event per corons');
-        done();
-      });
-
-      ss.write('');
-      ss.resume();
-      ss.write('');
-      ss.resume();
-      ss.write('');
-      ss.resume();
-      ss.end(src);
     });
 
     test('区切り文字がない場合でも分割できること', function(done) {
@@ -145,8 +90,12 @@ suite('split-stream - stream1のテスト', function() {
           src = '12345',
           lines = [];
 
-      ss.on('data', function(data) {
-        lines.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          lines.push(data);
+        }
       });
       ss.on('end', function() {
         assert.deepEqual(lines, ['12345'],
@@ -159,91 +108,18 @@ suite('split-stream - stream1のテスト', function() {
 
   });
 
-  suite('pause/resumeメソッドのテスト', function() {
-
-    test('pause後にwriteし、resumeして出力されること', function(done) {
-      var ss = splitStream.create(),
-          lines = [];
-
-      ss.on('data', function(data) {
-        lines.push(data);
-      });
-      ss.on('end', function() {
-        assert.deepEqual(lines, ['a', 'ab', 'bc\rc'],
-            'SplitStream should be sent data event per lines');
-        done();
-      });
-
-      ss.pause();
-
-      ss.write('a\na');
-      ss.write('b\r\nb');
-      ss.write('c\rc');
-      assert.deepEqual(lines, [],
-          'SplitStream should not be sent data event');
-
-      ss.resume();
-      ss.end();
-    });
-
-    test('pauseとresumeを繰り返して出力されること', function(done) {
-      var ss = splitStream.create(),
-          lines = [];
-
-      ss.on('data', function(data) {
-        lines.push(data);
-      });
-      ss.on('end', function() {
-        assert.deepEqual(lines, ['aa', 'bbcc', 'dd', 'ee', '', 'end', ''],
-            '');
-        done();
-      });
-
-      ss.pause();
-      ss.write('aa\nbb');
-      ss.resume();
-      ss.pause();
-      ss.write('cc\r\ndd');
-      ss.resume();
-      ss.pause();
-      ss.write('\nee\r\n\r\n');
-      ss.resume();
-      ss.pause();
-      ss.end('end\n');
-      ss.resume();
-    });
-
-    test('pause後にdestroyを呼び、出力されないこと', function(done) {
-      var ss = splitStream.create(),
-          lines = [];
-
-      ss.on('data', function(data) {
-        lines.push(data);
-      });
-      ss.on('close', function() {
-        assert.deepEqual(lines, [],
-            'SplitStream should be not sent data event');
-        done();
-      });
-
-      ss.pause();
-      ss.write('aaa\n');
-      ss.write('bbb\n');
-      ss.write('ccc\n');
-      ss.end();
-      ss.destroy();
-    });
-
-  });
-
   suite('pipeメソッドのテスト', function() {
 
     test('pipeで渡されて分割できること', function(done) {
       var ss = splitStream.create(),
           lines = [];
 
-      ss.on('data', function(data) {
-        lines.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          lines.push(data);
+        }
       });
       ss.on('end', function() {
         fs.readFile(__filename, 'utf8', function(err, data) {
@@ -260,8 +136,12 @@ suite('split-stream - stream1のテスト', function() {
       var ss = splitStream.create(),
               lines = [];
 
-      ss.on('data', function(data) {
-        lines.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          lines.push(data);
+        }
       });
       ss.on('end', function() {
         fs.readFile(__filename, 'utf8', function(err, data) {
@@ -272,7 +152,7 @@ suite('split-stream - stream1のテスト', function() {
       });
 
       fs.createReadStream(__filename, {
-        bufferSize: 512
+        highWaterMark: 512
       }).pipe(ss);
     });
 
@@ -280,8 +160,12 @@ suite('split-stream - stream1のテスト', function() {
       var ss = splitStream.create(),
               lines = [];
 
-      ss.on('data', function(data) {
-        lines.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          lines.push(data);
+        }
       });
       ss.on('end', function() {
         fs.readFile(__filename, 'utf8', function(err, data) {
@@ -292,7 +176,7 @@ suite('split-stream - stream1のテスト', function() {
       });
 
       fs.createReadStream(__filename, {
-        bufferSize: 32
+        highWaterMark: 32
       }).pipe(ss);
     });
 
@@ -300,8 +184,12 @@ suite('split-stream - stream1のテスト', function() {
       var ss = splitStream.create(),
               lines = [];
 
-      ss.on('data', function(data) {
-        lines.push(data);
+      ss.on('readable', function() {
+        var data;
+
+        while ((data = ss.read(1)) !== null) {
+          lines.push(data);
+        }
       });
       ss.on('end', function() {
         fs.readFile(__filename, 'utf8', function(err, data) {
@@ -312,7 +200,7 @@ suite('split-stream - stream1のテスト', function() {
       });
 
       fs.createReadStream(__filename, {
-        bufferSize: 1
+        highWaterMark: 1
       }).pipe(ss);
     });
   });

@@ -2,4 +2,15 @@
 // https://github.com/sasaplus1/split-stream
 // Released under the MIT License.
 
-module.exports = require('./lib/split_stream');
+var hasTransform = (!!require('stream').Transform);
+
+module.exports =
+    (hasTransform) ?
+    require('./lib/split_stream2') :
+    require('./lib/split_stream');
+
+module.exports.SplitStream1 = require('./lib/split_stream');
+module.exports.SplitStream2 =
+    (hasTransform) ?
+    require('./lib/split_stream2') :
+    null;

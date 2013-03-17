@@ -1,3 +1,8 @@
+# 0.2.0 / 2013-03-18
+
+  - added inherited stream2 class
+  - added export for SplitStream1 and SplitStream2
+
 # 0.1.2 / 2013-02-26
 
   - bug fix
