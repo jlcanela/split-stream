@@ -1,8 +1,8 @@
 var assert = require('assert'),
     fs = require('fs'),
-    splitStream = require('../');
+    splitStream = require('../').SplitStream1;
 
-suite('split-streamのテスト', function() {
+suite('split-stream - stream1のテスト', function() {
 
   suite('コンストラクタのテスト', function() {
 
@@ -117,7 +117,7 @@ suite('split-streamのテスト', function() {
       ss.end();
     });
 
-    test('writeで引数を渡さずendに引数を渡して分割できること', function(done) {
+    test('writeで空文字を渡しendに引数を渡して分割できること', function(done) {
       var ss = splitStream.create({ splitStr: ':' }),
           src = '1:2:3:4:5:',
           lines = [];
