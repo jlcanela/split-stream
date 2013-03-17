@@ -80,30 +80,6 @@ suite('split-stream - stream2のテスト', function() {
       ss.end();
     });
 
-    test('writeで空文字を渡しendに引数を渡して分割できること', function(done) {
-      var ss = splitStream.create({ splitStr: ':' }),
-          src = '1:2:3:4:5:',
-          lines = [];
-
-      ss.on('readable', function() {
-        var data;
-
-        while ((data = ss.read(1)) !== null) {
-          lines.push(data);
-        }
-      });
-      ss.on('end', function() {
-        assert.deepEqual(lines, ['1', '2', '3', '4', '5', ''],
-            'SplitStream should be sent data event per corons');
-        done();
-      });
-
-      ss.write('');
-      ss.write('');
-      ss.write('');
-      ss.end(src);
-    });
-
     test('区切り文字がない場合でも分割できること', function(done) {
       var ss = splitStream.create({ splitStr: ':' }),
           src = '12345',
