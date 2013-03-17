@@ -4,6 +4,11 @@ var assert = require('assert'),
 
 suite('split-stream - stream2のテスト', function() {
 
+  // no test if node.js version under 0.8
+  if (splitStream === null) {
+    return test('stream2 is not implemented.');
+  }
+
   suite('コンストラクタのテスト', function() {
 
     test('引数を渡さずに生成できること', function() {
